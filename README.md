@@ -27,7 +27,7 @@ GEPA (GeneticPareto) is a cutting-edge prompt optimization framework that uses e
 ### Installation
 
 ```bash
-pip install gepa
+# coming soon
 ```
 
 For development installation:
