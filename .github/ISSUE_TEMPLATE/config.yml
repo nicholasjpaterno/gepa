@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Discord Community
+    url: https://discord.gg/gepa-ai
+    about: Join our Discord server for real-time discussions, questions, and community support
+  - name: 📖 Documentation
+    url: https://gepa.readthedocs.io
+    about: Check our comprehensive documentation for guides, API reference, and tutorials
+  - name: 🚀 Examples
+    url: https://github.com/nicholasjpaterno/gepa/tree/main/examples
+    about: Browse practical examples and tutorials to get started with GEPA
+  - name: 🔒 Security Issues
+    url: mailto:security@gepa.dev
+    about: Report security vulnerabilities privately via email

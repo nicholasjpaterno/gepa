@@ -1,0 +1,27 @@
+FROM python:3.11-slim
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements and source code
+COPY pyproject.toml .
+COPY src/ src/
+COPY tests/ tests/
+COPY examples/ examples/
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -e ".[dev]"
+
+# Install additional test dependencies
+RUN pip install --no-cache-dir httpx
+
+# Create results directory
+RUN mkdir -p results
+
+# Default command (connection test)
+CMD ["python", "tests/integration/providers/test_lmstudio_connection.py"]
