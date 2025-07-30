@@ -23,7 +23,7 @@ from .core.optimizer import GEPAOptimizer
 from .core.system import CompoundAISystem
 from .inference.factory import InferenceFactory
 from .evaluation.metrics import Metric, ExactMatch, F1Score
-from .config import GEPAConfig
+from .config import GEPAConfig, AdvancedAlgorithmConfig
 
 __all__ = [
     "GEPAOptimizer",
@@ -33,4 +33,5 @@ __all__ = [
     "ExactMatch",
     "F1Score",
     "GEPAConfig",
+    "AdvancedAlgorithmConfig",
 ]

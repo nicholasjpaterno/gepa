@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  gepa-lmstudio-advanced:
+    build:
+      context: ../../
+      dockerfile: testing/lmstudio/Dockerfile.test
+    container_name: gepa-lmstudio-advanced-test
+    environment:
+      - LMSTUDIO_URL=${LMSTUDIO_URL:-http://host.docker.internal:1234}
+      - PYTHONPATH=/app/src
+    volumes:
+      - ../../results:/app/results
+    network_mode: host
+    command: python examples/providers/lmstudio_advanced_test.py
+    
+  gepa-lmstudio-basic:
+    build:
+      context: ../../
+      dockerfile: testing/lmstudio/Dockerfile.test
+    container_name: gepa-lmstudio-basic-test
+    environment:
+      - LMSTUDIO_URL=${LMSTUDIO_URL:-http://host.docker.internal:1234}
+      - PYTHONPATH=/app/src
+    volumes:
+      - ../../results:/app/results
+    network_mode: host
+    command: python tests/integration/providers/test_lmstudio_connection.py
+    
+  gepa-lmstudio-optimize:
+    build:
+      context: ../../
+      dockerfile: testing/lmstudio/Dockerfile.test
+    container_name: gepa-lmstudio-optimize-test
+    environment:
+      - LMSTUDIO_URL=${LMSTUDIO_URL:-http://host.docker.internal:1234}
+      - PYTHONPATH=/app/src
+    volumes:
+      - ../../results:/app/results
+    network_mode: host
+    command: python examples/providers/lmstudio_optimization.py 

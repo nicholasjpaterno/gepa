@@ -2,7 +2,7 @@
 # =====================
 
 .PHONY: help install dev test lint format clean
-.PHONY: test-lmstudio test-lmstudio-connection test-lmstudio-optimize
+.PHONY: test-lmstudio test-lmstudio-connection test-lmstudio-optimize test-lmstudio-advanced
 .PHONY: build-docker run-tests docs
 
 # Default target
@@ -15,6 +15,7 @@ help: ## Show this help message
 	@echo "LMStudio Testing:"
 	@echo "  make test-lmstudio          # Run basic connection test"
 	@echo "  make test-lmstudio-optimize # Run full optimization example"
+	@echo "  make test-lmstudio-advanced # Test advanced algorithms vs heuristics"
 	@echo
 	@echo "Environment Variables:"
 	@echo "  LMSTUDIO_URL=http://your-ip:port make test-lmstudio"
@@ -48,6 +49,10 @@ test-lmstudio-connection: ## Test LMStudio connectivity and API compatibility
 test-lmstudio-optimize: ## Run full LMStudio GEPA optimization with tangible results
 	@echo "🚀 Running LMStudio Optimization Example"
 	@./testing/lmstudio/test_lmstudio.sh optimize
+
+test-lmstudio-advanced: ## Test advanced algorithms vs basic heuristics with LMStudio
+	@echo "🧠 Testing Advanced Algorithms vs Basic Heuristics"
+	@./testing/lmstudio/test_lmstudio.sh advanced
 
 test-lmstudio-help: ## Show LMStudio testing help
 	@./testing/lmstudio/test_lmstudio.sh help
@@ -86,6 +91,7 @@ info: ## Show project information
 	@echo "  1. make install          # Install dependencies"
 	@echo "  2. make test-lmstudio    # Test with your LMStudio"
 	@echo "  3. make test-lmstudio-optimize  # See real optimization results"
+	@echo "  4. make test-lmstudio-advanced  # Test advanced algorithms (NEW!)"
 	@echo
 	@echo "📁 Testing Infrastructure:"
 	@echo "  • Location: testing/lmstudio/"

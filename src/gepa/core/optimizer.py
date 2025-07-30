@@ -13,6 +13,7 @@ from ..inference.factory import InferenceFactory
 from .system import CompoundAISystem
 from .pareto import ParetoFrontier, Candidate
 from .mutation import ReflectiveMutator, MutationType, Trajectory
+from .algorithm4 import Algorithm4SystemAwareMerge
 from ..evaluation.base import Evaluator
 
 
@@ -61,8 +62,9 @@ class GEPAOptimizer:
             self.reflection_client = reflection_client
         
         # Initialize components
-        self.pareto_frontier = ParetoFrontier(config.optimization.pareto_set_size)
-        self.mutator = ReflectiveMutator(self.reflection_client)
+        self.pareto_frontier = ParetoFrontier(config.optimization.pareto_set_size, config)
+        self.mutator = ReflectiveMutator(self.reflection_client, config)
+        self.system_aware_merge = Algorithm4SystemAwareMerge(config)
         
         # Tracking
         self.rollouts_used = 0
@@ -120,8 +122,16 @@ class GEPAOptimizer:
                 frontier_size=self.pareto_frontier.size()
             )
             
-            # Sample candidate from Pareto frontier (Pareto-based sampling)
-            parent_candidate = self.pareto_frontier.sample_candidate()
+            # Sample candidate from Pareto frontier using Algorithm 2 if enabled
+            if (hasattr(self.config, 'advanced') and 
+                hasattr(self.config.advanced, 'enable_score_prediction') and
+                self.config.advanced.enable_score_prediction):
+                parent_candidate = self.pareto_frontier.sample_candidate_algorithm2(
+                    d_pareto,  # Training dataset for Algorithm 2
+                    None  # Could pass scores matrix in full implementation
+                )
+            else:
+                parent_candidate = self.pareto_frontier.sample_candidate()
             if parent_candidate is None:
                 self.logger.warning("No candidates in Pareto frontier")
                 break
@@ -139,7 +149,25 @@ class GEPAOptimizer:
                 self.config.optimization.minibatch_size,
                 len(d_feedback)
             )
-            minibatch = random.sample(d_feedback, minibatch_size)
+            # Use strategic minibatch sampling if available and enabled
+            try:
+                if (hasattr(self.config, 'advanced') and 
+                    self.config.advanced.minibatch_strategy == "strategic"):
+                    from ..algorithms.advanced.strategic_sampling import StrategicMinibatchSampler, SamplingContext
+                    
+                    if not hasattr(self, '_strategic_sampler'):
+                        self._strategic_sampler = StrategicMinibatchSampler()
+                    
+                    context = SamplingContext(
+                        current_candidate=parent_candidate,
+                        sampling_strategy="balanced",
+                        exploration_factor=0.3
+                    )
+                    minibatch = self._strategic_sampler.sample_minibatch(d_feedback, minibatch_size, context)
+                else:
+                    minibatch = random.sample(d_feedback, minibatch_size)
+            except ImportError:
+                minibatch = random.sample(d_feedback, minibatch_size)
             
             # Evaluate on minibatch first
             candidate = await self._evaluate_system(new_system, minibatch)
@@ -339,13 +367,39 @@ class GEPAOptimizer:
         trajectories = []
         
         try:
-            # Perform mutation
-            new_prompt = await self.mutator.mutate_prompt(
-                parent_system,
-                module_id,
-                trajectories,
-                mutation_type
-            )
+            # Use Algorithm 3 if enabled, otherwise use standard mutation
+            if (hasattr(self.config, 'advanced') and 
+                hasattr(self.config.advanced, 'module_selection_strategy') and
+                self.config.advanced.module_selection_strategy == "intelligent"):
+                new_system = await self.mutator.algorithm3_reflective_mutation(
+                    parent_system,
+                    feedback_dataset,
+                    self.inference_client,
+                    self.evaluator
+                )
+                
+                if new_system:
+                    self.logger.info(
+                        "Performed Algorithm 3 reflective mutation",
+                        parent_id=parent_candidate.id
+                    )
+                    return new_system
+                else:
+                    # Fallback to standard mutation
+                    new_prompt = await self.mutator.mutate_prompt(
+                        parent_system,
+                        module_id,
+                        trajectories,
+                        mutation_type
+                    )
+            else:
+                # Standard mutation
+                new_prompt = await self.mutator.mutate_prompt(
+                    parent_system,
+                    module_id,
+                    trajectories,
+                    mutation_type
+                )
             
             # Create new system with mutated prompt
             new_system = parent_system.update_module(module_id, new_prompt)
@@ -367,7 +421,7 @@ class GEPAOptimizer:
         self,
         parent_candidate: Candidate
     ) -> Optional[CompoundAISystem]:
-        """Perform crossover between two candidates."""
+        """Perform crossover between two candidates using Algorithm 4: System Aware Merge."""
         
         # Select second parent from frontier
         other_candidates = [
@@ -380,7 +434,26 @@ class GEPAOptimizer:
         
         second_parent = random.choice(other_candidates)
         
-        # Simple crossover: randomly choose modules from each parent
+        # Try Algorithm 4: System Aware Merge first
+        if (hasattr(self.config, 'advanced') and 
+            hasattr(self.config.advanced, 'enable_mcda_scoring') and
+            self.config.advanced.enable_mcda_scoring):
+            new_system = self.system_aware_merge.system_aware_merge(
+                parent_candidate,
+                second_parent,
+                [],  # Would pass training dataset in full implementation
+                None  # Would pass evaluation scores in full implementation
+            )
+            
+            if new_system:
+                self.logger.info(
+                    "Performed Algorithm 4 system aware merge",
+                    parent1_id=parent_candidate.id,
+                    parent2_id=second_parent.id
+                )
+                return new_system
+        
+        # Fallback to simple crossover if Algorithm 4 fails
         parent1_system = parent_candidate.system
         parent2_system = second_parent.system
         
@@ -406,7 +479,7 @@ class GEPAOptimizer:
         )
         
         self.logger.info(
-            "Performed crossover",
+            "Performed simple crossover",
             parent1_id=parent_candidate.id,
             parent2_id=second_parent.id
         )

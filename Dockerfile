@@ -18,14 +18,12 @@ RUN apt-get update && apt-get install -y \
 # Set work directory
 WORKDIR /app
 
-# Copy dependency files
+# Copy dependency files and source code
 COPY --chown=gepa:gepa pyproject.toml README.md ./
+COPY --chown=gepa:gepa src/ ./src/
 
 # Install Python dependencies
 RUN pip install -e .
-
-# Copy application code
-COPY --chown=gepa:gepa src/ ./src/
 COPY --chown=gepa:gepa alembic.ini ./
 COPY --chown=gepa:gepa migrations/ ./migrations/
 

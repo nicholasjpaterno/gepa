@@ -1,27 +1,42 @@
 FROM python:3.11-slim
 
+# Set environment variables
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+
 # Set working directory
 WORKDIR /app
 
-# Install system dependencies
+# Install system dependencies (including build tools for scikit-learn)
 RUN apt-get update && apt-get install -y \
     curl \
+    build-essential \
+    gcc \
+    g++ \
+    gfortran \
+    libopenblas-dev \
+    liblapack-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements and source code
-COPY pyproject.toml .
+COPY pyproject.toml README.md ./
 COPY src/ src/
 COPY tests/ tests/
 COPY examples/ examples/
 
-# Install Python dependencies
+# Install Python dependencies (including advanced algorithms deps)
 RUN pip install --no-cache-dir -e ".[dev]"
 
 # Install additional test dependencies
 RUN pip install --no-cache-dir httpx
 
-# Create results directory
-RUN mkdir -p results
+# Create results directory with proper permissions
+RUN mkdir -p results && chmod 777 results
+
+# Verify advanced algorithms can be imported
+RUN python -c "from gepa.algorithms.advanced.score_prediction import InstanceScorePredictor; from gepa.algorithms.advanced.adaptive_comparison import AdaptiveScoreComparator; from gepa.algorithms.advanced.intelligent_selection import IntelligentModuleSelector; print('✅ Advanced algorithms imported successfully in Docker!')"
 
 # Default command (connection test)
 CMD ["python", "tests/integration/providers/test_lmstudio_connection.py"]
