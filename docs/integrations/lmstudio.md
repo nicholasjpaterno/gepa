@@ -4,7 +4,7 @@ GEPA works seamlessly with LMStudio's OpenAI-compatible API. This guide shows ho
 
 ## ✅ Compatibility Confirmed
 
-**Test Results from http://192.168.1.3:1234:**
+**Test Results from http://localhost:1234:**
 - ✅ Connection successful
 - ✅ 18 models detected and accessible
 - ✅ OpenAI-compatible API endpoints working
@@ -29,7 +29,7 @@ config = GEPAConfig(
     inference={
         "provider": "openai",  # Use OpenAI provider for compatibility
         "model": "your-model-name",  # Use any model loaded in LMStudio
-        "base_url": "http://192.168.1.3:1234",  # Your LMStudio URL
+        "base_url": "http://localhost:1234",  # Your LMStudio URL
         "api_key": "dummy-key",  # LMStudio doesn't require real API key
         "max_tokens": 100,
         "temperature": 0.7
@@ -114,7 +114,7 @@ GEPA can work with any model loaded in LMStudio.
 config = GEPAConfig(
     inference={
         "provider": "openai",
-        "base_url": "http://192.168.1.3:1234",  # Local network
+        "base_url": "http://localhost:1234",  # Local network
         # "base_url": "http://localhost:1234",   # Same machine
         # "base_url": "http://0.0.0.0:1234",     # All interfaces
     }
@@ -125,7 +125,7 @@ config = GEPAConfig(
 ```python
 # List available models first
 async with httpx.AsyncClient() as client:
-    response = await client.get("http://192.168.1.3:1234/v1/models")
+    response = await client.get("http://localhost:1234/v1/models")
     models = [model["id"] for model in response.json()["data"]]
     print("Available models:", models)
 

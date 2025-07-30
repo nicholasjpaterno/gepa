@@ -137,7 +137,7 @@ docker run --rm --network host -v $(pwd)/results:/app/results \
 3. **Network connectivity** to LMStudio instance
 
 ### Tested Configuration
-- **URL**: http://192.168.1.3:1234
+- **URL**: http://localhost:1234
 - **Models**: 18 models available (phi-4-mini-reasoning, qwen3 variants, etc.)
 - **API**: OpenAI-compatible endpoints
 - **Performance**: ~4-15 seconds per evaluation batch

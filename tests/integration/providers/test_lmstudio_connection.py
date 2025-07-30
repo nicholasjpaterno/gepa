@@ -197,14 +197,14 @@ async def main():
     print("🧪 GEPA LMStudio Integration Test")
     print("=" * 50)
     
-    base_url = "http://192.168.1.3:1234"
+    base_url = "http://localhost:1234"
     
     # Step 1: Test connection
     connected, models = await test_lmstudio_connection(base_url)
     
     if not connected:
         print("\n❌ Cannot connect to LMStudio. Please check:")
-        print("   1. LMStudio is running at http://192.168.1.3:1234")
+        print("   1. LMStudio is running at http://localhost:1234")
         print("   2. Network connectivity")
         print("   3. LMStudio API server is enabled")
         return

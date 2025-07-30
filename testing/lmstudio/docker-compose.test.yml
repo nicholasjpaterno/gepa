@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile.test
     network_mode: host
     environment:
-      - LMSTUDIO_URL=http://192.168.1.3:1234
+      - LMSTUDIO_URL=http://localhost:1234
     volumes:
       - ./test_results:/app/results
     command: python test_lmstudio.py

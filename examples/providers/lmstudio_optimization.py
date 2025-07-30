@@ -40,7 +40,7 @@ from gepa.evaluation.metrics import ExactMatch, F1Score
 class LMStudioTester:
     """Handles LMStudio connection and model detection."""
     
-    def __init__(self, base_url: str = "http://192.168.1.3:1234"):
+    def __init__(self, base_url: str = "http://localhost:1234"):
         self.base_url = base_url
         self.available_models = []
         
@@ -351,7 +351,7 @@ async def main():
         print("   • LMStudio is running")
         print("   • A model is loaded")
         print("   • API server is enabled")
-        print("   • Network connectivity to http://192.168.1.3:1234")
+        print("   • Network connectivity to http://localhost:1234")
         return
     
     # 2. Configure GEPA

@@ -6,7 +6,7 @@
 set -e
 
 # Configuration
-LMSTUDIO_URL=${LMSTUDIO_URL:-"http://192.168.1.3:1234"}
+LMSTUDIO_URL=${LMSTUDIO_URL:-"http://localhost:1234"}
 MODE=${1:-"test"}  # test or optimize
 
 # Check if Docker is available
@@ -78,7 +78,7 @@ case $MODE in
         echo "  help      - Show this help message"
         echo
         echo "Environment Variables:"
-        echo "  LMSTUDIO_URL  - LMStudio server URL (default: http://192.168.1.3:1234)"
+        echo "  LMSTUDIO_URL  - LMStudio server URL (default: http://localhost:1234)"
         echo
         echo "Examples:"
         echo "  ./testing/lmstudio/test_lmstudio.sh test                                    # Basic connection test"

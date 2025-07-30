@@ -67,7 +67,7 @@ LMSTUDIO_URL=http://localhost:1234 ./test_lmstudio.sh optimize
 ```
 🧪 GEPA LMStudio Integration Test
 ==================================================
-🔍 Testing connection to LMStudio at http://192.168.1.3:1234
+🔍 Testing connection to LMStudio at http://localhost:1234
 ✅ Connected successfully!
 📋 Available models: model1, model2, model3...
 🧪 Testing chat completion with model: model1
@@ -82,7 +82,7 @@ LMSTUDIO_URL=http://localhost:1234 ./test_lmstudio.sh optimize
 ```
 🧪 GEPA LMStudio Optimization Example
 ==================================================
-🔍 Detecting LMStudio setup at http://192.168.1.3:1234
+🔍 Detecting LMStudio setup at http://localhost:1234
 ✅ Found 18 models
 🎯 Selected model: phi-4-mini-reasoning
 
@@ -90,7 +90,7 @@ LMSTUDIO_URL=http://localhost:1234 ./test_lmstudio.sh optimize
    • Training examples: 15
    • Test examples: 5
    • Model: phi-4-mini-reasoning
-   • LMStudio URL: http://192.168.1.3:1234
+   • LMStudio URL: http://localhost:1234
 
 🚀 GEPA Optimization Starting
 ============================================================
