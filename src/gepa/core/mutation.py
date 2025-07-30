@@ -467,6 +467,11 @@ Compress the prompt by:
         try:
             if (hasattr(self, 'config') and hasattr(self.config, 'advanced') and 
                 self.config.advanced.module_selection_strategy == "intelligent"):
+                # Create context for intelligent selection
+                context = {
+                    'generation': getattr(self, 'current_generation', 0),
+                    'budget_remaining': 1.0  # Default budget remaining
+                }
                 target_module_id = self._select_target_module_intelligent(system, context)
             else:
                 target_module_id = self._select_target_module_round_robin(system)

@@ -90,13 +90,27 @@ class SequentialFlow:
                 raise ValueError(f"Input validation failed for module {module_id}")
             
             # Execute module
-            response = await inference_client.generate(
-                prompt=module.prompt,
-                context=current_data
+            from ..inference.base import InferenceRequest
+            
+            # Format prompt with context data
+            formatted_prompt = module.prompt
+            if 'text' in current_data:
+                formatted_prompt = formatted_prompt.replace('{text}', str(current_data['text']))
+            
+            request = InferenceRequest(
+                prompt=formatted_prompt,
+                max_tokens=100,
+                temperature=0.1
             )
             
+            response = await inference_client.generate(request)
+            
+            # Extract output from response
+            output_text = response.text if hasattr(response, 'text') else str(response)
+            
             # Update current data with response
-            current_data.update(response)
+            current_data['output'] = output_text.strip()
+            current_data[f'{module_id}_output'] = output_text.strip()
         
         return current_data
 
