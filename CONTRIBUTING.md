@@ -1,6 +1,6 @@
 # Contributing to GEPA
 
-Thank you for your interest in contributing to GEPA! We welcome contributions from the community and are excited to work with you to make GEPA even better.
+Thank you for your interest in contributing to GEPA!
 
 ## 🌟 Ways to Contribute
 
