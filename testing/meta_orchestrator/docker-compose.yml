@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  meta-orchestrator-test:
+    build:
+      context: ../..
+      dockerfile: testing/meta_orchestrator/Dockerfile
+    container_name: gepa-meta-orchestrator-test
+    environment:
+      - LMSTUDIO_URL=${LMSTUDIO_URL:-http://host.docker.internal:1234}
+      - PYTHONPATH=/app/src:/app
+    volumes:
+      - ../../results:/app/results
+    networks:
+      - gepa-test-network
+    depends_on:
+      - meta-orchestrator-validate
+    
+  meta-orchestrator-validate:
+    build:
+      context: ../..  
+      dockerfile: testing/meta_orchestrator/Dockerfile
+    container_name: gepa-meta-orchestrator-validate
+    environment:
+      - LMSTUDIO_URL=${LMSTUDIO_URL:-http://host.docker.internal:1234}
+    command: ["python", "-c", "
+import asyncio;
+import sys;
+sys.path.append('/app/src');
+from examples.meta_orchestrator_lmstudio_test import LMStudioConnection;
+async def check():
+    conn = LMStudioConnection('${LMSTUDIO_URL:-http://host.docker.internal:1234}');
+    success = await conn.connect_and_verify();
+    exit(0 if success else 1);
+asyncio.run(check())
+"]
+    networks:
+      - gepa-test-network
+
+networks:
+  gepa-test-network:
+    driver: bridge

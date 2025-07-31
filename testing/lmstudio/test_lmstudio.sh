@@ -61,7 +61,7 @@ case $MODE in
             -v "$(pwd)/results:/app/results" \
             -e LMSTUDIO_URL="$LMSTUDIO_URL" \
             gepa-lmstudio-optimize \
-            python examples/providers/lmstudio_optimization.py
+            python examples/providers/lmstudio_advanced_test.py
 
         echo
         echo "🎉 Optimization completed!"

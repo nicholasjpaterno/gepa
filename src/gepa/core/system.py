@@ -7,7 +7,7 @@ from abc import ABC, abstractmethod
 from pydantic import BaseModel
 
 
-@dataclass
+@dataclass(frozen=True)
 class IOSchema:
     """Input/Output schema definition."""
     fields: Dict[str, type]
@@ -30,7 +30,7 @@ class IOSchema:
         return True
 
 
-@dataclass
+@dataclass(frozen=True)
 class LanguageModule:
     """Language module component."""
     id: str
@@ -94,8 +94,11 @@ class SequentialFlow:
             
             # Format prompt with context data
             formatted_prompt = module.prompt
-            if 'text' in current_data:
-                formatted_prompt = formatted_prompt.replace('{text}', str(current_data['text']))
+            # Replace all placeholder fields with data from current_data
+            for key, value in current_data.items():
+                placeholder = f'{{{key}}}'
+                if placeholder in formatted_prompt:
+                    formatted_prompt = formatted_prompt.replace(placeholder, str(value))
             
             request = InferenceRequest(
                 prompt=formatted_prompt,

@@ -38,4 +38,4 @@ services:
     volumes:
       - ../../results:/app/results
     network_mode: host
-    command: python examples/providers/lmstudio_optimization.py 
+    command: python examples/providers/lmstudio_advanced_test.py 

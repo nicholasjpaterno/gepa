@@ -92,6 +92,27 @@ async def optimize_prompts():
 asyncio.run(optimize_prompts())
 ```
 
+### 🐳 MetaOrchestrator (Revolutionary Multi-Dimensional Optimization)
+
+
+```bash
+# Quick test with your running LMStudio - everything in containers!
+./test-meta-orchestrator-real.sh
+
+# Or use the comprehensive Docker Compose setup
+docker-compose -f docker-compose.lmstudio-real.yml run --rm gepa-meta-orchestrator-test
+```
+
+**Four Revolutionary Pillars:**
+- 🤖 **RL-based Algorithm Selection** - Intelligent algorithm sequencing based on optimization state
+- 🏗️ **Predictive Topology Evolution** - Dynamic system architecture optimization  
+- 📊 **Multi-Fidelity Bayesian HyperOptimization** - Efficient parameter tuning with transfer learning
+- 📝 **Structural Prompt Evolution** - Advanced prompt structure optimization beyond content
+
+**Prerequisites:** Just Docker + running LMStudio. No local Python dependencies needed!
+
+See [MetaOrchestrator Testing Guide](testing/meta_orchestrator/README.md) and [Docker Ruleset](DOCKER_RULESET.md) for comprehensive documentation.
+
 ### CLI Usage
 
 ```bash
@@ -618,4 +639,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Made with ❤️ by the GEPA community**
+**Made with ❤️

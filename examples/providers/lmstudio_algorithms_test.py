@@ -26,7 +26,7 @@ import sys
 import time
 from pathlib import Path
 from typing import Dict, List, Any, Optional
-from unittest.mock import Mock, AsyncMock
+# Removed mock imports - using real implementations only
 
 import httpx
 
@@ -229,21 +229,21 @@ class AlgorithmTestSuite:
                 {"text": "It's just okay", "expected": "neutral"}
             ]
             
-            # Mock evaluator for testing
-            mock_evaluator = Mock()
-            mock_evaluator.evaluate_single = AsyncMock()
-            mock_evaluator.evaluate_single.return_value = Mock(scores={"accuracy": 0.75})
+            # Create real evaluator for testing
+            from gepa.evaluation.base import SimpleEvaluator
+            from gepa.evaluation.metrics import ExactMatch
+            
+            evaluator = SimpleEvaluator(metrics=[ExactMatch()])
             
             print("   🧠 Testing reflective mutation logic...")
             
-            # Test the mutation method (note: this is async so we test the setup)
+            # Test the mutation method with real evaluation
             try:
-                # This will test the core logic without full LLM calls
                 result = await mutator.algorithm3_reflective_mutation(
                     system=system,
                     training_dataset=training_data,
                     inference_client=inference_client,
-                    evaluator=mock_evaluator,
+                    evaluator=evaluator,
                     minibatch_size=2
                 )
                 

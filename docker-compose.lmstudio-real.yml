@@ -1,0 +1,152 @@
+services:
+  # MetaOrchestrator Test with Real LMStudio
+  gepa-meta-orchestrator-test:
+    build:
+      context: .
+      dockerfile: docker/meta-orchestrator/Dockerfile
+    container_name: gepa-meta-orchestrator-lmstudio
+    environment:
+      - PYTHONPATH=/app/src:/app
+      - LMSTUDIO_URL=http://host.docker.internal:1234
+      - GEPA_TEST_MODE=${GEPA_TEST_MODE:-single}  # single or auto mode
+    volumes:
+      - ./results:/app/results
+      - ./src:/app/src:ro
+      - ./examples:/app/examples:ro
+    network_mode: host  # Direct access to host LMStudio
+    command: ["python", "examples/meta_orchestrator_lmstudio_test.py", "--single-round", "--lmstudio-url", "http://host.docker.internal:1234"]
+
+  # Validation service - simple Python command
+  gepa-meta-validate:
+    build:
+      context: .
+      dockerfile: docker/meta-orchestrator/Dockerfile
+    container_name: gepa-meta-validate-lmstudio
+    environment:
+      - PYTHONPATH=/app/src:/app
+      - LMSTUDIO_URL=http://host.docker.internal:1234
+    volumes:
+      - ./results:/app/results
+    network_mode: host  # Direct access to host LMStudio
+    command: 
+      - python
+      - -c
+      - |
+        import sys
+        sys.path.append('/app/src')
+        print('🧪 Validating MetaOrchestrator Components...')
+        try:
+            from gepa.meta_orchestrator import MetaOrchestrator, ConfigProfiles
+            print('✅ MetaOrchestrator imports successful')
+            config = ConfigProfiles.get_profile('development')
+            print(f'✅ Configuration profile loaded: {config.optimization_mode}')
+            print('✅ All components validated successfully!')
+        except Exception as e:
+            print(f'❌ Validation failed: {e}')
+            import traceback
+            traceback.print_exc()
+            sys.exit(1)
+        
+        print('🔌 Testing LMStudio connectivity...')
+        import asyncio
+        from examples.meta_orchestrator_lmstudio_test import LMStudioConnection
+        async def test():
+            conn = LMStudioConnection('http://host.docker.internal:1234')
+            success = await conn.connect_and_verify()
+            if success:
+                print('✅ LMStudio connectivity verified')
+                return 0
+            else:
+                print('❌ LMStudio connectivity failed')
+                return 1
+        exit_code = asyncio.run(test())
+        if exit_code != 0:
+            sys.exit(exit_code)
+        print('🎉 All validations passed - LMStudio ready for MetaOrchestrator!')
+
+  # Development environment with LMStudio access
+  gepa-meta-dev:
+    build:
+      context: .
+      dockerfile: docker/development/Dockerfile
+    container_name: gepa-meta-dev-lmstudio
+    environment:
+      - PYTHONPATH=/app/src:/app
+      - LMSTUDIO_URL=http://host.docker.internal:1234
+    volumes:
+      - .:/app
+      - ./results:/app/results
+    network_mode: host  # Direct access to host services
+    ports:
+      - "8888:8888"  # Jupyter
+      - "8501:8501"  # Streamlit
+    command: ["tail", "-f", "/dev/null"]  # Keep running for development
+
+  # Quick single-round test for rapid development
+  gepa-meta-quick-test:
+    build:
+      context: .
+      dockerfile: docker/meta-orchestrator/Dockerfile
+    container_name: gepa-meta-quick-lmstudio
+    environment:
+      - PYTHONPATH=/app/src:/app
+      - LMSTUDIO_URL=http://host.docker.internal:1234
+    volumes:
+      - ./results:/app/results
+      - ./src:/app/src:ro
+      - ./examples:/app/examples:ro
+    network_mode: host
+    command: ["python", "examples/meta_orchestrator_lmstudio_test.py", "--single-round", "--lmstudio-url", "http://host.docker.internal:1234"]
+
+  # Extended auto-mode test for comprehensive evaluation
+  gepa-meta-extended-test:
+    build:
+      context: .
+      dockerfile: docker/meta-orchestrator/Dockerfile
+    container_name: gepa-meta-extended-lmstudio
+    environment:
+      - PYTHONPATH=/app/src:/app
+      - LMSTUDIO_URL=http://host.docker.internal:1234
+    volumes:
+      - ./results:/app/results
+      - ./src:/app/src:ro
+      - ./examples:/app/examples:ro
+    network_mode: host
+    command: ["python", "examples/meta_orchestrator_lmstudio_test.py", "--auto", "--debug", "--lmstudio-url", "http://host.docker.internal:1234"]
+
+  # Configurable test with environment variables  
+  gepa-meta-configurable-test:
+    build:
+      context: .
+      dockerfile: docker/meta-orchestrator/Dockerfile
+    container_name: gepa-meta-configurable-lmstudio
+    environment:
+      - PYTHONPATH=/app/src:/app
+      - LMSTUDIO_URL=http://host.docker.internal:1234
+      - GEPA_TEST_MODE=${GEPA_TEST_MODE:-single}  # single or auto
+      - GEPA_DEBUG=${GEPA_DEBUG:-false}  # true or false
+    volumes:
+      - ./results:/app/results
+      - ./src:/app/src:ro
+      - ./examples:/app/examples:ro
+    network_mode: host
+    entrypoint: ["/bin/bash"]
+    command: 
+      - -c 
+      - |
+        # Set mode argument
+        if [ "$$GEPA_TEST_MODE" = "auto" ]; then
+          MODE_ARG="--auto"
+        else
+          MODE_ARG="--single-round"
+        fi
+        
+        # Set debug argument
+        if [ "$$GEPA_DEBUG" = "true" ]; then
+          DEBUG_ARG="--debug"
+        else
+          DEBUG_ARG=""
+        fi
+        
+        # Run the test
+        exec python examples/meta_orchestrator_lmstudio_test.py $$MODE_ARG $$DEBUG_ARG --lmstudio-url "$$LMSTUDIO_URL"
