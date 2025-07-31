@@ -38,6 +38,7 @@ python examples/quickstart.py
 | Example | Description | Complexity | Key Features |
 |---------|-------------|------------|--------------|
 | `quickstart.py` | Basic sentiment classification | Beginner | Simple setup, basic metrics |
+| `meta_orchestrator_quickstart.py` | **NEW!** MetaOrchestrator example | Beginner | Four-pillar architecture, real optimization |
 | `text_summarization.py` | Multi-step summarization system | Intermediate | Complex system, ROUGE metrics |
 | `code_generation.py` | Python code synthesis | Intermediate | Code execution, planning system |
 | `multi_provider.py` | Provider comparison | Intermediate | Multiple LLMs, cost analysis |
@@ -69,7 +70,39 @@ python examples/quickstart.py
 
 ---
 
-### 2. Text Summarization (`text_summarization.py`)
+### 2. MetaOrchestrator Quickstart (`meta_orchestrator_quickstart.py`) **🔥 NEW!**
+
+**Purpose**: Experience the revolutionary MetaOrchestrator four-pillar architecture with real optimization.
+
+**What you'll learn**:
+- MetaOrchestrator vs baseline GEPA comparison
+- Four-pillar architecture in action:
+  - RL-based Algorithm Selection
+  - Predictive Topology Evolution  
+  - Multi-Fidelity Bayesian HyperOptimization
+  - Structural Prompt Evolution
+- Real performance analysis
+- Production configuration profiles
+
+**Prerequisites**: Running LMStudio with a loaded model
+
+**Run time**: ~3-5 minutes  
+**LMStudio calls**: ~30-40
+
+```bash
+# Ensure LMStudio is running first
+python examples/meta_orchestrator_quickstart.py
+```
+
+**Expected output**:
+- Baseline vs MetaOrchestrator performance comparison
+- Real optimization improvements (not simulated!)
+- Component contribution analysis
+- Revolutionary four-pillar architecture demonstration
+
+---
+
+### 3. Text Summarization (`text_summarization.py`)
 
 **Purpose**: Optimize a multi-step text summarization system using advanced metrics.
 
@@ -93,7 +126,7 @@ python examples/text_summarization.py
 
 ---
 
-### 3. Code Generation (`code_generation.py`)
+### 4. Code Generation (`code_generation.py`)
 
 **Purpose**: Optimize a code generation system with execution-based evaluation.
 
@@ -117,7 +150,7 @@ python examples/code_generation.py
 
 ---
 
-### 4. Multi-Provider Comparison (`multi_provider.py`)
+### 5. Multi-Provider Comparison (`multi_provider.py`)
 
 **Purpose**: Compare different LLM providers on the same optimization task.
 
@@ -142,7 +175,7 @@ python examples/multi_provider.py
 
 ---
 
-### 5. Custom Metrics (`custom_metrics.py`)
+### 6. Custom Metrics (`custom_metrics.py`)
 
 **Purpose**: Create domain-specific evaluation metrics for business applications.
 
